@@ -1,36 +1,93 @@
-### Getting started
-There are various things you can do to quickly and efficiently configure your Codio Box to your exact requirements. 
 
-### GUI Applications and the Virtual Desktop 
-The Virtual Desktop allows you auto develop GUI based applications using any programming language. You can install a Virtual Desktop in your Box. You can then start the desktop and view it within the Codio IDE or in a new browser tab.
+# Command Line Shell
 
-[Virtual Desktop documentation](https://codio.com/docs/ide/boxes/installsw/gui/)
+**Contributors:**  
+- Ivan Ibhawoh 
+
+---
+
+## Project Overview
+
+This project implements a command-line shell in C that provides basic functionalities like executing commands, managing input/output redirection, handling pipes, and supporting background processes. It also demonstrates the use of system calls, process control, and signal handling to create an interactive shell environment.
+
+---
+
+## Features
+
+- **Custom Command Prompt:** Displays the current working directory as a prompt.  
+- **Built-in Commands:**
+  - `cd`: Change directory.
+  - `pwd`: Display the current working directory.
+  - `echo`: Print arguments to the standard output.
+  - `env`: List all environment variables.
+  - `setenv`: Set environment variables.  
+- **External Commands:** Executes external programs using `execvp()`.  
+- **I/O Redirection:** Supports input (`<`) and output (`>`) redirection.  
+- **Piping:** Allows the use of pipes (`|`) for inter-process communication.  
+- **Background Processes:** Supports background execution with `&`.  
+- **Signal Handling:** Gracefully handles `Ctrl-C` (`SIGINT`) and enforces a timeout for long-running processes (`SIGALRM`).  
+
+---
+
+## Design Choices
+
+1. **Input Parsing:**  
+   The shell tokenizes input using `strtok` and a set of delimiters, ensuring robust command parsing.  
+2. **Process Management:**  
+   Commands are executed in child processes using `fork()`, allowing the parent shell to remain interactive.  
+3. **Signal Handling:**  
+   - `SIGINT` is handled to prevent abrupt termination of the shell.  
+   - `SIGALRM` is used to terminate unresponsive processes.  
+4. **I/O Redirection and Pipes:**  
+   Custom handling of file descriptors ensures seamless redirection and communication between commands in a pipeline.  
+5. **Modular Design:**  
+   Separate functions for built-in commands (`cd`, `pwd`, etc.) enhance code readability and maintainability.  
+
+---
+
+## Code Documentation
+
+### Key Functions
+- **`update_prompt()`:** Updates the shell prompt with the current directory.  
+- **`handle_cd(char *directory)`:** Implements the `cd` command.  
+- **`sigint_handler(int signum)`:** Handles `Ctrl-C` interruptions gracefully.  
+- **`sigalrm_handler(int signum)`:** Terminates processes that exceed a timeout.  
+- **`main()`:** The core shell loop that handles input, command execution, and process management.
+
+### File Structure
+- `shell.c`: Contains the source code for the shell.
+
+---
 
 
-### Command line access and the Terminal window
-All Codio Boxes provide sudo level privileges to the underlying Ubuntu server. This means you can install and configure any component you like. You access the terminal from the **Tools->Terminal** menu item.
+### Compilation
+Run the following command to compile the program:
+```bash
+gcc -o shell src/main.c
+```
 
-### Debugger
-The Codio IDE comes with a powerful visual debugger. Currently we support Python, Java, C, C++ and NodeJS. Other languages can be added on request.
+### Usage
+Start the shell by running:
+```bash
+./shell
+```
 
-[Debugger documentation](https://codio.com/docs/ide/features/debugging/)
+#### Examples:
+1. **Change directory:**
+   ```bash
+   cd /path/to/directory
+   ```
+2. **Run a command in the background:**
+   ```bash
+   ls -l &
+   ```
+3. **Redirect output:**
+   ```bash
+   ls > output.txt
+   ```
+4. **Pipe commands:**
+   ```bash
+   ls | grep "main"
+   ```
 
-
-### Content authoring and assessments
-Codio comes with a very powerful content authoring tool, Codio Guides. Guides is also where you create all forms of auto-graded assessments. 
-
-- [Guides documentation](https://codio.com/docs/content/authoring/overview/)
-- [Assessments documentation](https://codio.com/docs/content/authoring/assessments/)
-
-### Templating Box configurations and projects
-Codio offers two very powerful templating options so you can create new projects from those templates with just a couple of clicks. **Stacks** allow you to create snapshots of the Box’s underlying software configuration. You can then create new projects from a Stack avoiding having to configure anew each time you start a new project. **Starter Packs** allow you to template an entire project, including workspace code.
-
-- [Stacks documentation](https://codio.com/docs/project/stacks/)
-- [Starter Packs documentation](https://codio.com/docs/project/packs/)
-
-### Install software
-You can always install software onto your Box using the command line. However, Codio offers a shortcut for commonly installed components that can be accessed from the **Tools->Install Software** menu.
-
-We can easily add new items to the Install Software screen, so feel free to submit requests.
-
-[Install Software documentation](https://codio.com/docs/ide/boxes/installsw/box-parts/)
+---
